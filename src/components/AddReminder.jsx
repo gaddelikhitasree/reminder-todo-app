@@ -17,16 +17,13 @@ export default function AddReminder({ onAdd }) {
     e.preventDefault();
     if (!title.trim() || !datetime || !email.trim()) return;
 
-    // ✅ FIX: Convert local time properly
-    const localDate = new Date(datetime);
-    const correctTime = new Date(
-      localDate.getTime() - localDate.getTimezoneOffset() * 60000
-    ).toISOString();
+    // ✅ FIX: NO timezone conversion
+    const correctTime = datetime;
 
     onAdd({
       id: crypto.randomUUID(),
       title: title.trim(),
-      datetime: correctTime, // ✅ FIXED
+      datetime: correctTime, // ✅ send local time
       email,
       repeat,
       color,
