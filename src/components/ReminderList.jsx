@@ -6,7 +6,31 @@ import './ReminderList.css';
 export default function ReminderList({ reminders, setReminders }) {
   const [filter, setFilter] = useState('upcoming');
 
-  const handleAdd = (reminder) => setReminders([reminder, ...reminders]);
+  // 🔥 BACKEND CALL FUNCTION
+  const sendReminderToBackend = (reminder) => {
+    fetch("https://reminder-backend-hl7g.onrender.com/add-reminder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: "gaddelikhitasree@gmail.com",
+        message: reminder.title || "Reminder task",
+        dateTime: reminder.datetime
+      })
+    })
+      .then(res => res.text())
+      .then(data => console.log("Backend:", data))
+      .catch(err => console.error("Error:", err));
+  };
+
+  // 🔥 UPDATED ADD FUNCTION
+  const handleAdd = (reminder) => {
+    setReminders([reminder, ...reminders]);
+
+    // 🔥 SEND TO BACKEND
+    sendReminderToBackend(reminder);
+  };
 
   const handleToggle = (id) =>
     setReminders(reminders.map((r) => (r.id === id ? { ...r, completed: !r.completed } : r)));
@@ -32,6 +56,7 @@ export default function ReminderList({ reminders, setReminders }) {
   const upcomingCount = reminders.filter(
     (r) => !r.completed && new Date(r.datetime) >= new Date()
   ).length;
+
   const overdueCount = reminders.filter(
     (r) => !r.completed && new Date(r.datetime) < new Date()
   ).length;
