@@ -16,10 +16,13 @@ export default function AddReminder({ onAdd }) {
     e.preventDefault();
     if (!title.trim() || !datetime) return;
 
+    // 🔥 CONVERT TO ISO FORMAT (VERY IMPORTANT)
+    const isoDateTime = new Date(datetime).toISOString();
+
     onAdd({
       id: crypto.randomUUID(),
       title: title.trim(),
-      datetime,
+      datetime: isoDateTime, // ✅ FIXED HERE
       repeat,
       color,
       completed: false,
