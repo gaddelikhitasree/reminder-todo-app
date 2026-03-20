@@ -1,0 +1,45 @@
+.reminder-list-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.reminder-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.reminder-filter-btn {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: all 0.2s;
+}
+
+.reminder-filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.reminder-filter-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.reminder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.overdue-badge {
+  background: #fef2f2;
+  color: #ef4444;
+}
