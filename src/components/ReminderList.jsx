@@ -16,7 +16,7 @@ export default function ReminderList({ reminders, setReminders }) {
       body: JSON.stringify({
         email: "gaddelikhitasree@gmail.com",
         message: reminder.title || "Reminder task",
-        dateTime: reminder.datetime
+        dateTime: new Date(reminder.datetime).toISOString()
       })
     })
       .then(res => res.text())
