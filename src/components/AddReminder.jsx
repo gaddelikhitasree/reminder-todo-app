@@ -7,6 +7,7 @@ const REPEAT_OPTIONS = ['none', 'daily', 'weekly', 'monthly'];
 export default function AddReminder({ onAdd }) {
   const [title, setTitle] = useState('');
   const [datetime, setDatetime] = useState('');
+  const [email, setEmail] = useState(''); // 🔥 ADD THIS
   const [repeat, setRepeat] = useState('none');
   const [color, setColor] = useState('#6366f1');
 
@@ -14,15 +15,15 @@ export default function AddReminder({ onAdd }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim() || !datetime) return;
+    if (!title.trim() || !datetime || !email.trim()) return;
 
-    // 🔥 CONVERT TO ISO FORMAT (VERY IMPORTANT)
     const isoDateTime = new Date(datetime).toISOString();
 
     onAdd({
       id: crypto.randomUUID(),
       title: title.trim(),
-      datetime: isoDateTime, // ✅ FIXED HERE
+      datetime: isoDateTime,
+      email, // 🔥 VERY IMPORTANT
       repeat,
       color,
       completed: false,
@@ -31,6 +32,7 @@ export default function AddReminder({ onAdd }) {
 
     setTitle('');
     setDatetime('');
+    setEmail(''); // 🔥 RESET
     setRepeat('none');
     setColor('#6366f1');
   };
@@ -49,6 +51,18 @@ export default function AddReminder({ onAdd }) {
             placeholder="Remind me to..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="reminder-input"
+          />
+        </div>
+
+        {/* 🔥 NEW EMAIL FIELD */}
+        <div className="form-field">
+          <label>Email</label>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="reminder-input"
           />
         </div>
@@ -98,7 +112,7 @@ export default function AddReminder({ onAdd }) {
       <button
         type="submit"
         className="add-reminder-btn"
-        disabled={!title.trim() || !datetime}
+        disabled={!title.trim() || !datetime || !email.trim()}
       >
         <FiBell size={16} />
         Set Reminder

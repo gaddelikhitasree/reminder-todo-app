@@ -1,35 +1,40 @@
 import { useState, useMemo } from 'react';
 import ReminderItem from './ReminderItem';
 import AddReminder from './AddReminder';
+import emailjs from '@emailjs/browser'; // ✅ IMPORTANT
 import './ReminderList.css';
 
 export default function ReminderList({ reminders, setReminders }) {
   const [filter, setFilter] = useState('upcoming');
 
-  // 🔥 BACKEND CALL FUNCTION
-  const sendReminderToBackend = (reminder) => {
-    fetch("https://reminder-backend-hl7g.onrender.com/add-reminder", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
+  // 🔥 EMAILJS FUNCTION
+  const sendEmail = (reminder) => {
+    emailjs.send(
+      "service_oaljzfn",        // ✅ your service ID
+      "template_pjp0vda",       // ✅ your template ID
+      {
+        message: reminder.title,
+        time: reminder.datetime,
+        to_email: reminder.email
       },
-      body: JSON.stringify({
-        email: "gaddelikhitasree@gmail.com",
-        message: reminder.title || "Reminder task",
-        dateTime: new Date(reminder.datetime).toISOString()
-      })
+      "IM2QcpLwYPnKL9j1c"        // ✅ your public key
+    )
+    .then(() => {
+      console.log("✅ Email sent");
+      alert("📩 Reminder email sent!");
     })
-      .then(res => res.text())
-      .then(data => console.log("Backend:", data))
-      .catch(err => console.error("Error:", err));
+    .catch(err => {
+      console.error("❌ Email error:", err);
+      alert("❌ Email failed");
+    });
   };
 
   // 🔥 UPDATED ADD FUNCTION
   const handleAdd = (reminder) => {
     setReminders([reminder, ...reminders]);
 
-    // 🔥 SEND TO BACKEND
-    sendReminderToBackend(reminder);
+    // ✅ SEND EMAIL
+    sendEmail(reminder);
   };
 
   const handleToggle = (id) =>
