@@ -7,7 +7,7 @@ const REPEAT_OPTIONS = ['none', 'daily', 'weekly', 'monthly'];
 export default function AddReminder({ onAdd }) {
   const [title, setTitle] = useState('');
   const [datetime, setDatetime] = useState('');
-  const [email, setEmail] = useState(''); // 🔥 ADD THIS
+  const [email, setEmail] = useState('');
   const [repeat, setRepeat] = useState('none');
   const [color, setColor] = useState('#6366f1');
 
@@ -17,13 +17,17 @@ export default function AddReminder({ onAdd }) {
     e.preventDefault();
     if (!title.trim() || !datetime || !email.trim()) return;
 
-    const isoDateTime = new Date(datetime).toISOString();
+    // ✅ FIX: Convert local time properly
+    const localDate = new Date(datetime);
+    const correctTime = new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    ).toISOString();
 
     onAdd({
       id: crypto.randomUUID(),
       title: title.trim(),
-      datetime: isoDateTime,
-      email, // 🔥 VERY IMPORTANT
+      datetime: correctTime, // ✅ FIXED
+      email,
       repeat,
       color,
       completed: false,
@@ -32,7 +36,7 @@ export default function AddReminder({ onAdd }) {
 
     setTitle('');
     setDatetime('');
-    setEmail(''); // 🔥 RESET
+    setEmail('');
     setRepeat('none');
     setColor('#6366f1');
   };
@@ -55,7 +59,6 @@ export default function AddReminder({ onAdd }) {
           />
         </div>
 
-        {/* 🔥 NEW EMAIL FIELD */}
         <div className="form-field">
           <label>Email</label>
           <input
@@ -102,7 +105,6 @@ export default function AddReminder({ onAdd }) {
                 className={`color-dot ${color === c ? 'selected' : ''}`}
                 style={{ background: c }}
                 onClick={() => setColor(c)}
-                aria-label={`Select color ${c}`}
               />
             ))}
           </div>

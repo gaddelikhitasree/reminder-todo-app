@@ -1,23 +1,30 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import ReminderItem from './ReminderItem';
 import AddReminder from './AddReminder';
-import emailjs from '@emailjs/browser'; // ✅ IMPORTANT
+import emailjs from '@emailjs/browser';
 import './ReminderList.css';
 
 export default function ReminderList({ reminders, setReminders }) {
   const [filter, setFilter] = useState('upcoming');
 
-  // 🔥 EMAILJS FUNCTION
+  // 🔔 ASK NOTIFICATION PERMISSION
+  useEffect(() => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  // 📩 EMAIL FUNCTION
   const sendEmail = (reminder) => {
     emailjs.send(
-      "service_oaljzfn",        // ✅ your service ID
-      "template_pjp0vda",       // ✅ your template ID
+      "service_oaljzfn",
+      "template_pjp0vda",
       {
         message: reminder.title,
         time: reminder.datetime,
         to_email: reminder.email
       },
-      "IM2QcpLwYPnKL9j1c"        // ✅ your public key
+      "IM2QcpLwYPnKL9j1c"
     )
     .then(() => {
       console.log("✅ Email sent");
@@ -29,12 +36,25 @@ export default function ReminderList({ reminders, setReminders }) {
     });
   };
 
-  // 🔥 UPDATED ADD FUNCTION
+  // 🔔 NOTIFICATION FUNCTION
+  const scheduleNotification = (reminder) => {
+    const delay = new Date(reminder.datetime) - new Date();
+
+    if (delay > 0) {
+      setTimeout(() => {
+        new Notification("Reminder 🔔", {
+          body: reminder.title,
+        });
+      }, delay);
+    }
+  };
+
+  // 🔥 ADD FUNCTION
   const handleAdd = (reminder) => {
     setReminders([reminder, ...reminders]);
 
-    // ✅ SEND EMAIL
-    sendEmail(reminder);
+    sendEmail(reminder);          // 📩 email
+    scheduleNotification(reminder); // 🔔 notification
   };
 
   const handleToggle = (id) =>
